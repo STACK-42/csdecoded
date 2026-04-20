@@ -2,104 +2,196 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* ============================================================
+   Decoded — Design System
+   Hybrid: dark editorial (hero/landing) + light reading (lessons)
+   All colors HSL.
+   ============================================================ */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* ---------- LIGHT (reading mode — lesson/course pages) ---------- */
+    --background: 42 30% 97%;          /* warm paper #faf8f3 */
+    --foreground: 222 25% 12%;         /* near-ink */
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222 25% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222 25% 12%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 222 25% 12%;            /* ink */
+    --primary-foreground: 42 30% 97%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 40 20% 92%;
+    --secondary-foreground: 222 25% 12%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 40 18% 90%;
+    --muted-foreground: 222 10% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 14 92% 56%;              /* warm orange accent for light mode */
+    --accent-foreground: 42 30% 97%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 40 15% 86%;
+    --input: 40 15% 86%;
+    --ring: 222 25% 12%;
 
-    --radius: 0.5rem;
+    --radius: 0.25rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Brand accents (consistent across modes) */
+    --neon: 67 100% 64%;               /* #e8ff47 */
+    --orange: 14 100% 60%;             /* #ff6b35 */
+    --sky: 213 100% 75%;               /* #7eb8ff */
+    --violet: 263 100% 75%;            /* #b47fff */
+    --mint: 165 100% 64%;              /* #47ffcc */
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Typography */
+    --font-display: 'Syne', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --font-body: 'Lora', Georgia, serif;
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Reading surface tokens */
+    --reading-bg: 42 30% 97%;
+    --reading-fg: 222 25% 12%;
+    --reading-muted: 222 10% 40%;
+    --reading-rule: 40 15% 86%;
   }
 
+  /* ---------- DARK (hero/landing — editorial) ---------- */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 240 24% 5%;          /* #0a0a0f */
+    --foreground: 240 20% 93%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 240 22% 9%;                /* #13131f */
+    --card-foreground: 240 20% 93%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 240 22% 9%;
+    --popover-foreground: 240 20% 93%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 67 100% 64%;            /* neon yellow */
+    --primary-foreground: 240 24% 5%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 240 18% 12%;
+    --secondary-foreground: 240 20% 93%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 240 14% 14%;
+    --muted-foreground: 240 8% 55%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 67 100% 64%;
+    --accent-foreground: 240 24% 5%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 240 18% 14%;             /* #1e1e2e */
+    --input: 240 18% 14%;
+    --ring: 67 100% 64%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
+  * { @apply border-border; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+  ::selection { background: hsl(var(--neon)); color: hsl(240 24% 5%); }
+}
+
+/* ---------- Utility / decorative ---------- */
+@layer utilities {
+  .font-display { font-family: var(--font-display); }
+  .font-mono    { font-family: var(--font-mono); }
+  .font-body    { font-family: var(--font-body); }
+
+  .grid-noise {
+    background-image:
+      linear-gradient(hsl(var(--neon) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--neon) / 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  /* Reading prose styles for MDX lessons */
+  .prose-reading {
+    font-family: var(--font-body);
+    color: hsl(var(--reading-fg));
+    font-size: 18px;
+    line-height: 1.75;
+  }
+  .prose-reading h1 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(32px, 5vw, 52px);
+    line-height: 1.05;
+    margin: 2.5rem 0 1.25rem;
+    letter-spacing: -0.01em;
+  }
+  .prose-reading h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(24px, 3.2vw, 32px);
+    line-height: 1.2;
+    margin: 2.5rem 0 1rem;
+    letter-spacing: -0.005em;
+  }
+  .prose-reading h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    margin: 2rem 0 .75rem;
+  }
+  .prose-reading p { margin: 0 0 1.25rem; }
+  .prose-reading a {
+    color: hsl(var(--reading-fg));
+    text-decoration: underline;
+    text-decoration-color: hsl(var(--orange));
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+  }
+  .prose-reading strong { color: hsl(var(--reading-fg)); font-weight: 600; }
+  .prose-reading em { font-style: italic; }
+  .prose-reading code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: hsl(var(--secondary));
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .prose-reading pre {
+    font-family: var(--font-mono);
+    background: hsl(240 24% 5%);
+    color: hsl(240 20% 93%);
+    padding: 20px 24px;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .prose-reading pre code { background: transparent; padding: 0; color: inherit; }
+  .prose-reading ul, .prose-reading ol { margin: 0 0 1.25rem 1.5rem; }
+  .prose-reading li { margin-bottom: .5rem; }
+  .prose-reading blockquote {
+    border-left: 3px solid hsl(var(--orange));
+    padding-left: 1.25rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: hsl(var(--reading-muted));
+  }
+  .prose-reading hr {
+    border: none;
+    border-top: 1px solid hsl(var(--reading-rule));
+    margin: 3rem 0;
   }
 }
