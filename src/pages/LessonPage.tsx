@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { MDXProvider } from "@mdx-js/react";
 import { SiteHeader, SiteFooter } from "@/components/layout/SiteChrome";
@@ -11,7 +11,12 @@ const accentBg: Record<string, string> = {
 
 export default function LessonPage() {
   const { courseSlug, lessonSlug } = useParams<{ courseSlug: string; lessonSlug: string }>();
-  const data = courseSlug && lessonSlug ? getLesson(courseSlug, lessonSlug) : null;
+  
+  const data = useMemo(() => 
+    courseSlug && lessonSlug ? getLesson(courseSlug, lessonSlug) : null,
+    [courseSlug, lessonSlug]
+  );
+
   const { isComplete, setComplete } = useProgress(courseSlug);
   const [scroll, setScroll] = useState(0);
 
