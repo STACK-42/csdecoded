@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [
-    { enforce: "pre", ...mdx({ providerImportSource: "@mdx-js/react" }) },
+    { enforce: "pre" as const, ...mdx({ providerImportSource: "@mdx-js/react" }) },
     react(),
     mode === "development" && componentTagger(),
   ].filter(Boolean),
