@@ -6,6 +6,7 @@ import mdx from "@mdx-js/rollup";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: "/csdecoded.github.io/",
   server: {
     host: "::",
     port: 8080,
