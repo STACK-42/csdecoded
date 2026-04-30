@@ -61,16 +61,16 @@ export const courses: Course[] = [
   {
     slug: "computer-literacy",
     title: "Computer Literacy",
-    tagline: "The fluency layer most people never name.",
+    tagline: "The fluency needed to be one with the machine",
     description:
-      "Everything about computing is interaction. The more precise your way of speaking to the machine, the more effective you become. Three layers: physical, language, systems. Built from years of observation about what separates fluent users from frustrated ones.",
+      "Everything about computing is interaction. The more precise your way of speaking to the machine, the more effective you become. There are three layers to that: physical, language, systems. Built from years of observation about what separates fluent users from frustrated ones.",
     accent: "orange",
     status: "available",
     number: "02",
     modules: [
       {
         title: "The Three Layers of Fluency",
-        blurb: "Each layer removes friction between intention and execution.",
+        blurb: "Each layer helps removing friction between intention and execution.",
         lessons: [
           { slug: "physical-layer", title: "The Physical Layer", duration: "6 min", Component: LitTyping },
           { slug: "language-layer", title: "The Language Layer", duration: "7 min", Component: LitLanguage },
