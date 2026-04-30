@@ -16,7 +16,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename="/csdecoded.github.io">
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/courses" element={<Courses />} />
