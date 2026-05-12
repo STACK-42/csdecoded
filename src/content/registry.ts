@@ -7,6 +7,7 @@ import LitTyping from "@/content/computer-literacy/01-physical-layer.mdx";
 import LitLanguage from "@/content/computer-literacy/02-language-layer.mdx";
 import LitSystems from "@/content/computer-literacy/03-systems-layer.mdx";
 import ExamMindLesson01 from "@/content/the-exam-mind/01-the-problem-with-how-you-study.mdx";
+import ExamMindLesson02 from "@/content/the-exam-mind/02-the-one-week-plan.mdx";
 
 export type Lesson = {
   slug: string;
@@ -128,6 +129,7 @@ export const courses: Course[] = [
         blurb: "Building the mental framework for success.",
         lessons: [
           { slug: "the-problem-with-how-you-study", title: "The Problem with How You Study", duration: "10 min", Component: ExamMindLesson01 },
+          { slug: "the-one-week-plan", title: "The One-Week Plan", duration: "12 min", Component: ExamMindLesson02 },
         ],
       },
     ],
