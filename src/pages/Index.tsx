@@ -105,7 +105,87 @@ export default function Index() {
         </div>
       </section>
 
+      {/* THE STORY */}
+      <section className="relative z-10 border-t border-border bg-black/20">
+        <div className="container py-24 max-w-4xl">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="eyebrow text-neon mb-4">Our Origin</div>
+              <h2 className="font-display text-4xl font-bold leading-tight mb-6">
+                Born from the frustration of "Magic Boxes"
+              </h2>
+              <div className="font-body text-lg text-foreground/70 space-y-4">
+                <p>
+                  Most engineers spend years using tools like Docker, Regex, and Compilers without 
+                  truly understanding the mathematical foundations that make them possible. 
+                  We call these "magic boxes."
+                </p>
+                <p>
+                  Decoded was started to peel back the layers. We believe that when you understand 
+                  the <em>Theory of Computation</em>, you don't just learn a tool—you learn how 
+                  computing itself works.
+                </p>
+              </div>
+            </div>
+            <div className="relative aspect-square border border-border bg-muted/5 flex items-center justify-center overflow-hidden">
+               <div className="absolute inset-0 grid-noise opacity-20" />
+               <div className="relative z-10 text-center p-8">
+                 <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Core Philosophy</div>
+                 <div className="font-display text-2xl italic leading-relaxed">
+                   "Complexity is just layers of simple abstractions."
+                 </div>
+               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* THE CREATORS */}
+      <section className="relative z-10 border-t border-border">
+        <div className="container py-24 max-w-5xl">
+          <div className="text-center mb-16">
+            <div className="eyebrow text-muted-foreground mb-3">The People</div>
+            <h2 className="font-display text-4xl font-bold">The Minds Behind Decoded</h2>
+          </div>
+
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
+             <CreatorCard 
+               name="Ahmed Alghali" 
+               role="Architect & Lead" 
+               bio="Obsessed with bridge-building between abstract math and deployable code. Usually found in a debugger or a whitepaper."
+               image="https://github.com/stack-42.png"
+             />
+             <div className="flex flex-col items-center justify-center border border-dashed border-border p-8 text-center bg-muted/5">
+                <div className="h-16 w-16 rounded-full bg-border/20 mb-4 animate-pulse" />
+                <div className="font-display font-bold text-muted-foreground">Join the Team</div>
+                <div className="font-mono text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">Open Source</div>
+             </div>
+          </div>
+        </div>
+      </section>
+
       <SiteFooter variant="dark" />
+    </div>
+  );
+}
+
+function CreatorCard({ name, role, bio, image }: { name: string; role: string; bio: string; image: string }) {
+  return (
+    <div className="group border border-border bg-muted/5 p-6 hover:border-neon/40 transition-colors">
+      <div className="flex items-center gap-4 mb-4">
+        <img 
+          src={image} 
+          alt={name} 
+          className="h-14 w-14 rounded-full border border-border grayscale group-hover:grayscale-0 transition-all" 
+        />
+        <div>
+          <div className="font-display font-bold text-lg">{name}</div>
+          <div className="font-mono text-[10px] text-neon uppercase tracking-widest">{role}</div>
+        </div>
+      </div>
+      <p className="text-sm text-muted-foreground leading-relaxed font-body italic">
+        "{bio}"
+      </p>
     </div>
   );
 }

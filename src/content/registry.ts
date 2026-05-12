@@ -6,6 +6,7 @@ import TocAutomata from "@/content/theory-of-computation/02-automata.mdx";
 import LitTyping from "@/content/computer-literacy/01-physical-layer.mdx";
 import LitLanguage from "@/content/computer-literacy/02-language-layer.mdx";
 import LitSystems from "@/content/computer-literacy/03-systems-layer.mdx";
+import ExamMindLesson01 from "@/content/the-exam-mind/01-the-problem-with-how-you-study.mdx";
 
 export type Lesson = {
   slug: string;
@@ -111,6 +112,25 @@ export const courses: Course[] = [
     status: "coming-soon",
     number: "05",
     modules: [],
+  },
+  {
+    slug: "the-exam-mind",
+    title: "The Exam Mind",
+    tagline: "Master the psychology of high-stakes performance.",
+    description:
+      "Exams are as much about mental endurance and strategy as they are about knowledge. This course decodes the psychology of performance, memory optimization, and the tactical frameworks used by top performers to excel under pressure.",
+    accent: "sky",
+    status: "available",
+    number: "06",
+    modules: [
+      {
+        title: "The Foundation",
+        blurb: "Building the mental framework for success.",
+        lessons: [
+          { slug: "the-problem-with-how-you-study", title: "The Problem with How You Study", duration: "10 min", Component: ExamMindLesson01 },
+        ],
+      },
+    ],
   },
 ];
 
