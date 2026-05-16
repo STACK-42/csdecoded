@@ -9,6 +9,7 @@ import LitSystems from "@/content/computer-literacy/03-systems-layer.mdx";
 import ExamMindLesson01 from "@/content/the-exam-mind/01-the-problem-with-how-you-study.mdx";
 import ExamMindLesson02 from "@/content/the-exam-mind/02-the-one-week-plan.mdx";
 import ExamMindLesson03 from "@/content/the-exam-mind/03-stress-and-anxiety.mdx";
+import ExamMindLesson04 from "@/content/the-exam-mind/04-exam-day.mdx";
 
 export type Lesson = {
   slug: string;
@@ -118,7 +119,7 @@ export const courses: Course[] = [
   {
     slug: "the-exam-mind",
     title: "The Exam Mind",
-    tagline: "Master the psychology of high-stakes performance.",
+    tagline: "Mental mastery for high-pressure moments..",
     description:
       "Exams are as much about mental endurance and strategy as they are about knowledge. This course decodes the psychology of performance, memory optimization, and the tactical frameworks used by top performers to excel under pressure.",
     accent: "sky",
@@ -132,6 +133,7 @@ export const courses: Course[] = [
           { slug: "the-problem-with-how-you-study", title: "The Problem with How You Study", duration: "10 min", Component: ExamMindLesson01 },
           { slug: "the-one-week-plan", title: "The One-Week Plan", duration: "12 min", Component: ExamMindLesson02 },
           { slug: "stress-and-anxiety", title: "Stress & Anxiety", duration: "8 min", Component: ExamMindLesson03 },
+          { slug: "exam-day", title: "Exam Day", duration: "7 min", Component: ExamMindLesson04 },
         ],
       },
     ],
