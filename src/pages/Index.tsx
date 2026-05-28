@@ -19,17 +19,17 @@ export default function Index() {
       {/* HERO */}
       <section className="relative z-10 border-b border-border">
         <div className="container py-20 md:py-28 max-w-4xl">
-          <div className="eyebrow text-neon mb-5">CS Theory · Real-world skills extraction</div>
-          <h1 className="font-display font-extrabold leading-[0.95] tracking-tight text-5xl sm:text-6xl md:text-7xl lg:text-[88px]">
-            Computer science,
+          <div className="eyebrow text-neon mb-5">CS Theory · Real-world skills maped</div>
+          <h1 className="font-display font-extrabold leading-[0.95] tracking-tight text-5xl sm:text-6xl md:text-7xl lg:text-[80px]">
+            Computer science Proofs,
             <br />
-            <span className="text-neon">decoded</span> into the
+            <span className="text-neon">decoded</span> to
             <br />
-            tools you already use.
+            production tools
           </h1>
           <p className="mt-8 max-w-2xl text-lg md:text-xl text-muted-foreground italic font-body leading-relaxed">
-            Every abstraction in a CS curriculum maps to something engineers use daily — they just never told you that.
-            This is the layer that bridges the gap.
+            Every Course in a CS curriculum maps to something more practical, used daily, with application everyhwere, it was just have to map that.
+            This is the layer that connects the thoery with whats out there.
           </p>
 
           <div className="mt-10 flex flex-wrap gap-3">
@@ -63,22 +63,17 @@ export default function Index() {
       <section className="relative z-10 border-b border-border">
         <div className="container py-16 md:py-20 max-w-3xl">
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
-            The problem nobody names
+            Theory vs. Tools
           </h2>
           <div className="font-body text-lg leading-relaxed text-foreground/80 space-y-5">
             <p>
-              Most CS courses teach you the mathematical scaffolding that practitioners use without
-              knowing they're using it. Theory of Computation is the perfect example —
-              built by Turing, Church, and Kleene to answer one question:
-              <em> what can a machine fundamentally compute?</em>
-            </p>
-            <p>
-              That question quietly produced regex, parsers, every CPU ever made, the limits of
-              antivirus software, and the cryptography that protects your bank account. Most
-              syllabi never make those connections explicit.
+              University courses hide enterprise-grade engineering tools behind layers of dense,
+              abstract proofs. complex notations and theorms, You shouldn't have to decode your own syllabus 
+              just to figure out what it talks about fundamentally or how it applies to production, 
+              we help extracting the the exact real-world utility hidden inside your current coursework.
             </p>
             <p className="text-neon">
-              Decoded does. One topic at a time.
+              Decoded does that. One topic at a time.
             </p>
           </div>
         </div>
@@ -116,14 +111,14 @@ export default function Index() {
               </h2>
               <div className="font-body text-lg text-foreground/70 space-y-4">
                 <p>
-                  Most engineers spend years using tools like Docker, Regex, and Compilers without 
-                  truly understanding the mathematical foundations that make them possible. 
-                  We call these "magic boxes."
+                  Stop guessing the application.
+                  Computer Science education is good at what it supposed to do, 
+                  but the student puts so much effort on mapping a course into practical 
+                  laps and linking thoery to practice, memorizing abstract proofs without 
+                  ever seeing the enterprise tools they built based on this.
                 </p>
                 <p>
-                  Decoded was started to peel back the layers. We believe that when you understand 
-                  the <em>Theory of Computation</em>, you don't just learn a tool—you learn how 
-                  computing itself works.
+                  you don't just learn concepts learn how computing itself works how they communicate and more.
                 </p>
               </div>
             </div>
@@ -132,7 +127,7 @@ export default function Index() {
                <div className="relative z-10 text-center p-8">
                  <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Core Philosophy</div>
                  <div className="font-display text-2xl italic leading-relaxed">
-                   "Complexity is just layers of simple abstractions."
+                   "Theory without tools is boring. Tools without theory are fragile"
                  </div>
                </div>
             </div>
@@ -140,52 +135,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* THE CREATORS */}
-      <section className="relative z-10 border-t border-border">
-        <div className="container py-24 max-w-5xl">
-          <div className="text-center mb-16">
-            <div className="eyebrow text-muted-foreground mb-3">The People</div>
-            <h2 className="font-display text-4xl font-bold">The Minds Behind Decoded</h2>
-          </div>
-
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
-             <CreatorCard 
-               name="Ahmed Alghali" 
-               role="Architect & Lead" 
-               bio="Obsessed with bridge-building between abstract math and deployable code. Usually found in a debugger or a whitepaper."
-               image="https://github.com/stack-42.png"
-             />
-             <div className="flex flex-col items-center justify-center border border-dashed border-border p-8 text-center bg-muted/5">
-                <div className="h-16 w-16 rounded-full bg-border/20 mb-4 animate-pulse" />
-                <div className="font-display font-bold text-muted-foreground">Join the Team</div>
-                <div className="font-mono text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">Open Source</div>
-             </div>
-          </div>
-        </div>
-      </section>
-
       <SiteFooter />
-    </div>
-  );
-}
-
-function CreatorCard({ name, role, bio, image }: { name: string; role: string; bio: string; image: string }) {
-  return (
-    <div className="group border border-border bg-muted/5 p-6 hover:border-neon/40 transition-colors">
-      <div className="flex items-center gap-4 mb-4">
-        <img 
-          src={image} 
-          alt={name} 
-          className="h-14 w-14 rounded-full border border-border grayscale group-hover:grayscale-0 transition-all" 
-        />
-        <div>
-          <div className="font-display font-bold text-lg">{name}</div>
-          <div className="font-mono text-[10px] text-neon uppercase tracking-widest">{role}</div>
-        </div>
-      </div>
-      <p className="text-sm text-muted-foreground leading-relaxed font-body italic">
-        "{bio}"
-      </p>
     </div>
   );
 }

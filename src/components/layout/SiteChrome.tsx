@@ -36,6 +36,10 @@ export function SiteFooter() {
     <footer className="border-t border-border">
       <div className="container py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 font-mono text-[11px] tracking-widest text-muted-foreground uppercase">
         <span>Decoded — built for bridging the abstraction gap</span>
+        <nav className="flex items-center gap-6">
+          <Link to="/courses" className="hover:text-foreground transition-colors">Courses</Link>
+          <Link to="/team" className="hover:text-foreground transition-colors">Team</Link>
+        </nav>
         <span>v0.1 · Progress saved on this device</span>
       </div>
     </footer>
