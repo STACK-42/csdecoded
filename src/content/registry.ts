@@ -39,9 +39,9 @@ export const courses: Course[] = [
   {
     slug: "theory-of-computation",
     title: "Theory of Computation",
-    tagline: "What machines can fundamentally compute — and why it matters in 2026.",
+    tagline: "What machines can fundamentally compute, still matters to understand",
     description:
-      "The 1930s mathematicians who built this field weren't writing apps. They were asking 'what is computable?' That question quietly produced regex, parsers, CPUs, cryptography, and the limits of antivirus software. This course decodes each abstraction into the tool you already use.",
+      "Back in the 1930s mathematicians who put the first principles of this field weren't writing and shipping apps. They were asking much simpler questions, like 'what is computable?' That question produced regex, parsers, CPUs, cryptography, and the famous world of antivirus software. This small course decodes each topic in the theory of computation into the tools you are going to use or already in use.",
     accent: "neon",
     status: "available",
     number: "01",
@@ -84,11 +84,11 @@ export const courses: Course[] = [
     ],
   },
   {
-    slug: "software-engineering",
-    title: "Software Engineering",
-    tagline: "The principles behind why senior code looks different.",
+    slug: "algorithms-complexity",
+    title: "Algorithms & Complexity",
+    tagline: "The math behind efficiency — and the hard limits of what can be solved.",
     description:
-      "Coupling, cohesion, abstraction layers, the patterns nobody told you have names. Coming soon.",
+      "Sorting and searching are just the surface. This course dives into Big O, P vs NP, and the algorithms that power everything from routing to genome sequencing. Decoded into the logic that helps you write code that scales.",
     accent: "sky",
     status: "coming-soon",
     number: "03",
@@ -106,11 +106,11 @@ export const courses: Course[] = [
     modules: [],
   },
   {
-    slug: "machine-learning",
-    title: "Machine Learning",
-    tagline: "Statistics with a marketing budget — decoded honestly.",
+    slug: "distributed-systems",
+    title: "Distributed Systems",
+    tagline: "Building reliable software out of unreliable parts.",
     description:
-      "What ML actually is underneath the hype, what it's good at, what it isn't, and the engineering tradeoffs that matter. Coming soon.",
+      "Consistency, availability, and the CAP theorem. This course decodes how massive systems stay synchronized across the globe, from Paxos to Raft and the tradeoffs of microservices.",
     accent: "mint",
     status: "coming-soon",
     number: "05",
@@ -127,11 +127,17 @@ export const courses: Course[] = [
     number: "06",
     modules: [
       {
-        title: "The Foundation",
-        blurb: "Building the mental framework for success.",
+        title: "The Strategy",
+        blurb: "Breaking old habits and building a framework that actually works for memory and recall.",
         lessons: [
           { slug: "the-problem-with-how-you-study", title: "The Problem with How You Study", duration: "10 min", Component: ExamMindLesson01 },
           { slug: "the-one-week-plan", title: "The One-Week Plan", duration: "12 min", Component: ExamMindLesson02 },
+        ],
+      },
+      {
+        title: "The Execution",
+        blurb: "Mastering the mental game and navigating the high-pressure reality of exam day.",
+        lessons: [
           { slug: "stress-and-anxiety", title: "Stress & Anxiety", duration: "8 min", Component: ExamMindLesson03 },
           { slug: "exam-day", title: "Exam Day", duration: "7 min", Component: ExamMindLesson04 },
         ],

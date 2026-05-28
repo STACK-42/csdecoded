@@ -28,7 +28,7 @@ export default function CoursePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <SiteHeader variant="light" />
+      <SiteHeader />
 
       <main className="flex-1">
         {/* Course header */}
@@ -140,7 +140,7 @@ export default function CoursePage() {
         </section>
       </main>
 
-      <SiteFooter variant="light" />
+      <SiteFooter />
     </div>
   );
 }

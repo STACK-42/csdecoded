@@ -1,15 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 
-export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" }) {
-  const isDark = variant === "dark";
+export function SiteHeader() {
   const { pathname } = useLocation();
 
   return (
-    <header
-      className={`relative z-10 ${isDark ? "dark" : ""} ${
-        isDark ? "bg-background text-foreground" : "bg-background text-foreground border-b border-border"
-      }`}
-    >
+    <header className="relative z-10 bg-background text-foreground border-b border-border">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-baseline gap-2">
           <span className="font-display text-xl font-extrabold tracking-tight">Decoded</span>
@@ -36,10 +31,9 @@ export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" })
   );
 }
 
-export function SiteFooter({ variant = "dark" }: { variant?: "dark" | "light" }) {
-  const isDark = variant === "dark";
+export function SiteFooter() {
   return (
-    <footer className={`${isDark ? "dark bg-background text-foreground" : ""} border-t border-border`}>
+    <footer className="border-t border-border">
       <div className="container py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 font-mono text-[11px] tracking-widest text-muted-foreground uppercase">
         <span>Decoded — built for bridging the abstraction gap</span>
         <span>v0.1 · Progress saved on this device</span>

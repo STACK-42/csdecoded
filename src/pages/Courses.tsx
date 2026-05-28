@@ -10,7 +10,7 @@ export default function Courses() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <SiteHeader variant="light" />
+      <SiteHeader />
       <main className="flex-1">
         <div className="container py-14 md:py-20 max-w-5xl">
           <div className="eyebrow text-muted-foreground mb-3">All Tracks</div>
@@ -28,7 +28,7 @@ export default function Courses() {
           </div>
         </div>
       </main>
-      <SiteFooter variant="light" />
+      <SiteFooter />
     </div>
   );
 }

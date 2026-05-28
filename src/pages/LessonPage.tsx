@@ -52,7 +52,7 @@ export default function LessonPage() {
         />
       </div>
 
-      <SiteHeader variant="light" />
+      <SiteHeader />
 
       <main className="flex-1">
         <article className="container max-w-2xl py-10 md:py-16">
@@ -140,7 +140,7 @@ export default function LessonPage() {
         </article>
       </main>
 
-      <SiteFooter variant="light" />
+      <SiteFooter />
     </div>
   );
 }

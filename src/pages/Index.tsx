@@ -10,11 +10,11 @@ export default function Index() {
   }, []);
 
   return (
-    <div className="dark min-h-screen bg-background text-foreground relative">
+    <div className="min-h-screen bg-background text-foreground relative">
       {/* grid texture */}
       <div className="grid-noise pointer-events-none fixed inset-0 z-0" aria-hidden />
 
-      <SiteHeader variant="dark" />
+      <SiteHeader />
 
       {/* HERO */}
       <section className="relative z-10 border-b border-border">
@@ -164,7 +164,7 @@ export default function Index() {
         </div>
       </section>
 
-      <SiteFooter variant="dark" />
+      <SiteFooter />
     </div>
   );
 }

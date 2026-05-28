@@ -89,6 +89,12 @@
     --border: 240 18% 14%;             /* #1e1e2e */
     --input: 240 18% 14%;
     --ring: 67 100% 64%;
+
+    /* Reading surface tokens (flip with the theme) */
+    --reading-bg: 240 24% 5%;
+    --reading-fg: 240 20% 93%;
+    --reading-muted: 240 8% 55%;
+    --reading-rule: 240 18% 14%;
   }
 }
 
@@ -180,6 +186,8 @@
     line-height: 1.6;
   }
   .prose-reading pre code { background: transparent; padding: 0; color: inherit; }
+  /* Lift code blocks off the page background in dark mode */
+  .dark .prose-reading pre { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); }
   .prose-reading ul, .prose-reading ol { margin: 0 0 1.25rem 1.5rem; }
   .prose-reading li { margin-bottom: .5rem; }
   .prose-reading blockquote {
