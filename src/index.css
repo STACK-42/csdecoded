@@ -1,3 +1,5 @@
+@import "katex/dist/katex.min.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -202,4 +204,29 @@
     border-top: 1px solid hsl(var(--reading-rule));
     margin: 3rem 0;
   }
+  .prose-reading table {
+    width: 100%;
+    margin: 1.75rem 0;
+    border-collapse: collapse;
+    font-family: var(--font-body);
+    font-size: 0.95em;
+    display: block;
+    overflow-x: auto;
+  }
+  .prose-reading thead { background: hsl(var(--secondary)); }
+  .prose-reading th {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.6rem 0.85rem;
+    border: 1px solid hsl(var(--reading-rule));
+    color: hsl(var(--reading-fg));
+  }
+  .prose-reading td {
+    padding: 0.6rem 0.85rem;
+    border: 1px solid hsl(var(--reading-rule));
+    vertical-align: top;
+  }
+  .prose-reading tbody tr:nth-child(even) td { background: hsl(var(--secondary) / 0.4); }
+  .prose-reading table code { font-size: 0.9em; }
 }

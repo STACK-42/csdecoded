@@ -3,6 +3,9 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import mdx from "@mdx-js/rollup";
+import remarkMath from "remark-math";
+import remarkGfm from "remark-gfm";
+import rehypeKatex from "rehype-katex";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -15,7 +18,14 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [
-    { enforce: "pre" as const, ...mdx({ providerImportSource: "@mdx-js/react" }) },
+    {
+      enforce: "pre" as const,
+      ...mdx({
+        providerImportSource: "@mdx-js/react",
+        remarkPlugins: [remarkGfm, remarkMath],
+        rehypePlugins: [rehypeKatex],
+      }),
+    },
     react(),
     mode === "development" && componentTagger(),
   ].filter(Boolean),
