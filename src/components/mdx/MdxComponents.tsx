@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useId, useMemo, useState } from "react";
 
 type Tone = "neon" | "orange" | "sky" | "violet" | "mint";
 
@@ -83,4 +83,475 @@ export function Pillar({
 
 export function ApplicationsGrid({ children }: { children: ReactNode }) {
   return <div className="my-6 grid gap-3 md:grid-cols-2">{children}</div>;
+}
+
+/* ============================================================
+   AutomatonDiagram — interactive finite-automaton visualizer.
+   Pure SVG, no graph libs. Renders states + transitions and lets
+   the reader step through an input string symbol by symbol.
+   ============================================================ */
+
+type AutomatonTransition = { from: string; to: string; label: string };
+
+type AutomatonDiagramProps = {
+  states: string[];
+  alphabet: string[];
+  transitions: AutomatonTransition[];
+  initial: string;
+  accepting: string[];
+};
+
+type RunStatus = "idle" | "accepted" | "rejected" | "rejected-no-transition";
+
+export function AutomatonDiagram({
+  states,
+  alphabet,
+  transitions,
+  initial,
+  accepting,
+}: AutomatonDiagramProps) {
+  const reactId = useId();
+  const markerId = `automaton-arrow-${reactId.replace(/:/g, "")}`;
+
+  const [input, setInput] = useState("");
+  const [position, setPosition] = useState(0);
+  const [currentState, setCurrentState] = useState(initial);
+  const [status, setStatus] = useState<RunStatus>("idle");
+
+  /* ---------- layout ---------- */
+  const r = 28;
+  const stateGapX = 140;
+  const sidePadding = 50;
+
+  // Longest |fromIdx - toIdx| across non-self edges. Drives extra vertical
+  // room so "skip" edges (e.g. q2 → q0 jumping over q1) can curve clear of
+  // intermediate state circles instead of slicing through them.
+  const maxSkipSpan = useMemo(() => {
+    const idx = new Map<string, number>();
+    states.forEach((s, i) => idx.set(s, i));
+    let max = 1;
+    for (const t of transitions) {
+      if (t.from === t.to) continue;
+      const f = idx.get(t.from);
+      const to = idx.get(t.to);
+      if (f === undefined || to === undefined) continue;
+      max = Math.max(max, Math.abs(f - to));
+    }
+    return max;
+  }, [states, transitions]);
+
+  // Set of states that have a self-loop. Skip edges passing over such a
+  // state route below the state row instead of fighting for the airspace
+  // above (where the self-loop and its label already live).
+  const selfLoopStates = useMemo(() => {
+    const s = new Set<string>();
+    for (const t of transitions) if (t.from === t.to) s.add(t.from);
+    return s;
+  }, [transitions]);
+
+  const skipCurveOffsetFor = (span: number) => 120 + Math.max(0, span - 2) * 40;
+  const skipPad = maxSkipSpan > 1 ? skipCurveOffsetFor(maxSkipSpan) - r + 10 : 0;
+  const topPadding = Math.max(80, skipPad);
+  const bottomPadding = Math.max(60, skipPad);
+  const stateY = topPadding + r;
+  const svgWidth = sidePadding * 2 + Math.max(0, (states.length - 1) * stateGapX) + r * 2;
+  const svgHeight = topPadding + r * 2 + bottomPadding;
+  const stateX = (i: number) => sidePadding + r + i * stateGapX;
+
+  const stateIndex = useMemo(() => {
+    const m = new Map<string, number>();
+    states.forEach((s, i) => m.set(s, i));
+    return m;
+  }, [states]);
+
+  /* ---------- group transitions by (from, to), combining labels ---------- */
+  const groupedTransitions = useMemo(() => {
+    const map = new Map<string, { from: string; to: string; labels: string[] }>();
+    for (const t of transitions) {
+      const key = `${t.from}${t.to}`;
+      if (!map.has(key)) map.set(key, { from: t.from, to: t.to, labels: [] });
+      map.get(key)!.labels.push(t.label);
+    }
+    return Array.from(map.values());
+  }, [transitions]);
+
+  const pairKeys = useMemo(
+    () => new Set(groupedTransitions.map((g) => `${g.from}${g.to}`)),
+    [groupedTransitions]
+  );
+  const hasReverse = (from: string, to: string) =>
+    from !== to && pairKeys.has(`${to}${from}`);
+
+  /* ---------- simulator ---------- */
+  const handleStep = () => {
+    if (status !== "idle") return;
+    if (position >= input.length) {
+      setStatus(accepting.includes(currentState) ? "accepted" : "rejected");
+      return;
+    }
+    const symbol = input[position];
+    if (!alphabet.includes(symbol)) {
+      setStatus("rejected-no-transition");
+      return;
+    }
+    const t = transitions.find((tr) => tr.from === currentState && tr.label === symbol);
+    if (!t) {
+      setStatus("rejected-no-transition");
+      return;
+    }
+    const nextPos = position + 1;
+    setCurrentState(t.to);
+    setPosition(nextPos);
+    if (nextPos >= input.length) {
+      setStatus(accepting.includes(t.to) ? "accepted" : "rejected");
+    }
+  };
+
+  const handleReset = () => {
+    setPosition(0);
+    setCurrentState(initial);
+    setStatus("idle");
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+    setPosition(0);
+    setCurrentState(initial);
+    setStatus("idle");
+  };
+
+  const isError = status === "rejected" || status === "rejected-no-transition";
+  const isActive = (s: string) => s === currentState;
+
+  const stateFillClass = (s: string) => {
+    if (!isActive(s)) return "fill-transparent";
+    if (status === "accepted") return "fill-mint/30";
+    if (isError) return "fill-orange/30";
+    return "fill-neon/25";
+  };
+  const stateStrokeClass = (s: string) => {
+    if (!isActive(s)) return "stroke-current";
+    if (status === "accepted") return "stroke-mint";
+    if (isError) return "stroke-orange";
+    return "stroke-neon";
+  };
+
+  /* ---------- edge geometry helpers ---------- */
+  const renderEdge = (g: { from: string; to: string; labels: string[] }) => {
+    const fromIdx = stateIndex.get(g.from);
+    const toIdx = stateIndex.get(g.to);
+    if (fromIdx === undefined || toIdx === undefined) return null;
+    const x1 = stateX(fromIdx);
+    const y1 = stateY;
+    const x2 = stateX(toIdx);
+    const y2 = stateY;
+    const labels = g.labels.join(", ");
+    const key = `${g.from}->${g.to}`;
+
+    // Self-loop: arc above the state
+    if (g.from === g.to) {
+      const startX = x1 - r * 0.6;
+      const startY = y1 - r * 0.8;
+      const endX = x1 + r * 0.6;
+      const endY = y1 - r * 0.8;
+      const c1X = x1 - 30;
+      const c1Y = y1 - r - 55;
+      const c2X = x1 + 30;
+      const c2Y = y1 - r - 55;
+      return (
+        <g key={key}>
+          <path
+            d={`M ${startX} ${startY} C ${c1X} ${c1Y}, ${c2X} ${c2Y}, ${endX} ${endY}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            markerEnd={`url(#${markerId})`}
+          />
+          <text
+            x={x1}
+            y={y1 - r - 42}
+            textAnchor="middle"
+            className="font-mono fill-current"
+            fontSize={11}
+          >
+            {labels}
+          </text>
+        </g>
+      );
+    }
+
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const ux = dx / len;
+    const uy = dy / len;
+
+    const span = Math.abs(fromIdx - toIdx);
+    const isSkip = span > 1;
+    const isBidir = hasReverse(g.from, g.to);
+
+    // Straight line: adjacent states, one-way.
+    if (!isBidir && !isSkip) {
+      const sx = x1 + r * ux;
+      const sy = y1 + r * uy;
+      const ex = x2 - r * ux;
+      const ey = y2 - r * uy;
+      const mx = (sx + ex) / 2;
+      const my = (sy + ey) / 2 - 8;
+      return (
+        <g key={key}>
+          <line
+            x1={sx}
+            y1={sy}
+            x2={ex}
+            y2={ey}
+            stroke="currentColor"
+            strokeWidth={1.5}
+            markerEnd={`url(#${markerId})`}
+          />
+          <text
+            x={mx}
+            y={my}
+            textAnchor="middle"
+            className="font-mono fill-current"
+            fontSize={11}
+          >
+            {labels}
+          </text>
+        </g>
+      );
+    }
+
+    // Curved edge. Two reasons to curve:
+    //  - bidir pair → arrows must land on opposite sides of the AB line
+    //  - skip edge (|span| > 1) → must arc clear of intermediate state circles
+    let perpX: number;
+    let perpY: number;
+    let curveOffset: number;
+    if (isSkip && isBidir) {
+      // Bidir skip: keep the "opposite sides" separation, but with enough
+      // clearance to clear intermediates on whichever side each curves to.
+      perpX = -uy;
+      perpY = ux;
+      curveOffset = skipCurveOffsetFor(span);
+    } else if (isSkip) {
+      // One-way skip. Route below when any intermediate state has a self-loop —
+      // its loop and label already occupy the airspace above, so flying over
+      // would crash into them. Otherwise arc above.
+      const [lo, hi] = fromIdx < toIdx ? [fromIdx, toIdx] : [toIdx, fromIdx];
+      let intermediateHasLoop = false;
+      for (let i = lo + 1; i < hi; i++) {
+        if (selfLoopStates.has(states[i])) { intermediateHasLoop = true; break; }
+      }
+      perpX = 0;
+      perpY = intermediateHasLoop ? 1 : -1;
+      curveOffset = skipCurveOffsetFor(span);
+    } else {
+      // Adjacent bidir: gentle curve right of direction.
+      perpX = -uy;
+      perpY = ux;
+      curveOffset = 38;
+    }
+
+    const midX = (x1 + x2) / 2;
+    const midY = (y1 + y2) / 2;
+    const ctrlX = midX + curveOffset * perpX;
+    const ctrlY = midY + curveOffset * perpY;
+
+    // Start/end at circle edges, tangent to the Bezier — vector from each
+    // center toward the control point gives a clean visual handoff.
+    const sdx = ctrlX - x1;
+    const sdy = ctrlY - y1;
+    const slen = Math.hypot(sdx, sdy) || 1;
+    const sx = x1 + (r * sdx) / slen;
+    const sy = y1 + (r * sdy) / slen;
+
+    const edx = ctrlX - x2;
+    const edy = ctrlY - y2;
+    const elen = Math.hypot(edx, edy) || 1;
+    const ex = x2 + (r * edx) / elen;
+    const ey = y2 + (r * edy) / elen;
+
+    // Quadratic Bezier apex sits at midpoint(segment-midpoint, control).
+    const apexX = 0.5 * midX + 0.5 * ctrlX;
+    const apexY = 0.5 * midY + 0.5 * ctrlY;
+    const labelX = apexX + 16 * perpX;
+    const labelY = apexY + 16 * perpY;
+
+    return (
+      <g key={key}>
+        <path
+          d={`M ${sx} ${sy} Q ${ctrlX} ${ctrlY}, ${ex} ${ey}`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          markerEnd={`url(#${markerId})`}
+        />
+        <text
+          x={labelX}
+          y={labelY}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          className="font-mono fill-current"
+          fontSize={11}
+        >
+          {labels}
+        </text>
+      </g>
+    );
+  };
+
+  /* ---------- render ---------- */
+  const initialIdx = stateIndex.get(initial);
+
+  return (
+    <div className="not-prose my-8 border border-border bg-card rounded-sm">
+      <div className="overflow-x-auto p-5">
+        <svg
+          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+          width={svgWidth}
+          height={svgHeight}
+          className="block mx-auto text-foreground"
+          role="img"
+          aria-label="Finite automaton diagram"
+        >
+          <defs>
+            <marker
+              id={markerId}
+              markerWidth={10}
+              markerHeight={10}
+              refX={9}
+              refY={5}
+              orient="auto"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
+            </marker>
+          </defs>
+
+          {groupedTransitions.map(renderEdge)}
+
+          {initialIdx !== undefined && (
+            <line
+              x1={stateX(initialIdx) - r - 24}
+              y1={stateY}
+              x2={stateX(initialIdx) - r - 2}
+              y2={stateY}
+              stroke="currentColor"
+              strokeWidth={1.5}
+              markerEnd={`url(#${markerId})`}
+            />
+          )}
+
+          {states.map((s, i) => {
+            const x = stateX(i);
+            const y = stateY;
+            const isAccept = accepting.includes(s);
+            return (
+              <g key={s}>
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={r}
+                  className={`${stateStrokeClass(s)} ${stateFillClass(s)} transition-colors`}
+                  strokeWidth={2}
+                />
+                {isAccept && (
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r={r - 5}
+                    fill="none"
+                    className={`${stateStrokeClass(s)} transition-colors`}
+                    strokeWidth={1.5}
+                  />
+                )}
+                <text
+                  x={x}
+                  y={y}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  className="font-mono fill-current"
+                  fontSize={13}
+                >
+                  {s}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      <div className="border-t border-border p-5 flex flex-col gap-4">
+        <div className="flex flex-wrap items-stretch gap-2">
+          <input
+            type="text"
+            value={input}
+            onChange={handleInputChange}
+            placeholder={`Type a string over {${alphabet.join(", ")}}`}
+            className="flex-1 min-w-[200px] font-mono text-sm px-3 py-2 border border-border bg-transparent text-foreground focus:outline-none focus:border-foreground rounded-sm"
+            spellCheck={false}
+            autoCapitalize="off"
+            autoCorrect="off"
+          />
+          <button
+            type="button"
+            onClick={handleStep}
+            disabled={status !== "idle"}
+            className="font-mono text-[11px] uppercase tracking-widest px-4 py-2 border border-border hover:border-foreground disabled:opacity-40 disabled:cursor-not-allowed transition-colors rounded-sm"
+          >
+            Step →
+          </button>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="font-mono text-[11px] uppercase tracking-widest px-4 py-2 border border-border hover:border-foreground transition-colors rounded-sm"
+          >
+            Reset
+          </button>
+        </div>
+
+        <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2 font-mono text-xs">
+          <div className="flex items-baseline gap-2">
+            <span className="text-muted-foreground tracking-widest">INPUT</span>
+            <span>
+              {input.length === 0 ? (
+                <span className="text-muted-foreground italic">empty</span>
+              ) : (
+                input.split("").map((ch, i) => {
+                  let cls = "text-foreground";
+                  if (i < position) cls = "text-muted-foreground line-through";
+                  else if (i === position && status === "idle") cls = "text-neon font-bold";
+                  return (
+                    <span key={i} className={cls}>
+                      {ch}
+                    </span>
+                  );
+                })
+              )}
+            </span>
+          </div>
+
+          <div className="flex items-baseline gap-2">
+            <span className="text-muted-foreground tracking-widest">STATE</span>
+            <span className="font-bold">{currentState}</span>
+          </div>
+
+          <div className="flex items-baseline gap-2">
+            <span className="text-muted-foreground tracking-widest">STATUS</span>
+            {status === "idle" && position === 0 && (
+              <span className="text-muted-foreground">READY</span>
+            )}
+            {status === "idle" && position > 0 && (
+              <span className="text-neon">READING</span>
+            )}
+            {status === "accepted" && <span className="text-mint">ACCEPTED</span>}
+            {status === "rejected" && <span className="text-orange">REJECTED</span>}
+            {status === "rejected-no-transition" && (
+              <span className="text-orange">REJECTED — NO TRANSITION</span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
