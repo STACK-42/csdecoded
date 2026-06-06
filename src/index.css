@@ -230,3 +230,78 @@
   .prose-reading tbody tr:nth-child(even) td { background: hsl(var(--secondary) / 0.4); }
   .prose-reading table code { font-size: 0.9em; }
 }
+
+/* ----------------------------------------------------------------
+   ReactFlow — minimal base styles for <Diagram>.
+   We intentionally do NOT import @xyflow/react/dist/style.css so the
+   theme stays under our control. These rules cover positioning,
+   handle hiding, and edge stroke inheritance. Visual styling for
+   nodes and edges lives in the components themselves.
+   ---------------------------------------------------------------- */
+.react-flow {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.react-flow__container,
+.react-flow__renderer,
+.react-flow__pane,
+.react-flow__viewport {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.react-flow__viewport { transform-origin: 0 0; pointer-events: none; }
+.react-flow__pane { z-index: 1; }
+.react-flow__nodes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.react-flow__node {
+  position: absolute;
+  pointer-events: all;
+  -webkit-user-select: none;
+  user-select: none;
+  transform-origin: 0 0;
+}
+.react-flow__edges {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.react-flow__edge { pointer-events: none; }
+.react-flow__edge-path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+.react-flow__edge-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: hsl(var(--muted-foreground));
+}
+.react-flow__edge-textbg { fill: hsl(var(--card)); }
+.react-flow__handle {
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.react-flow__handle-right  { right: 0;  top: 50%;    transform: translate(50%, -50%); }
+.react-flow__handle-left   { left: 0;   top: 50%;    transform: translate(-50%, -50%); }
+.react-flow__handle-top    { top: 0;    left: 50%;   transform: translate(-50%, -50%); }
+.react-flow__handle-bottom { bottom: 0; left: 50%;   transform: translate(-50%, 50%); }
+.react-flow__attribution { display: none !important; }
+.react-flow__controls,
+.react-flow__minimap,
+.react-flow__background { display: none; }

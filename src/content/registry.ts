@@ -3,6 +3,7 @@ import type { ComponentType } from "react";
 // Lesson MDX modules (eagerly loaded so we can render synchronously)
 import TocIntro from "@/content/theory-of-computation/01-intro.mdx";
 import TocLanguageOfLanguages from "@/content/theory-of-computation/02-language-of-languages.mdx";
+import TocHowToReadAMachine from "@/content/theory-of-computation/03-how-to-read-a-machine.mdx";
 import TocAutomata from "@/content/theory-of-computation/02-automata.mdx";
 import LitTyping from "@/content/computer-literacy/01-physical-layer.mdx";
 import LitLanguage from "@/content/computer-literacy/02-language-layer.mdx";
@@ -53,6 +54,7 @@ export const courses: Course[] = [
         lessons: [
           { slug: "intro", title: "The Abstraction Gap", duration: "5 min", Component: TocIntro },
           { slug: "language-of-languages", title: "The Language of Languages", duration: "12 min", Component: TocLanguageOfLanguages },
+          { slug: "how-to-read-a-machine", title: "How to Read a Machine", duration: "9 min", Component: TocHowToReadAMachine },
         ],
       },
       {

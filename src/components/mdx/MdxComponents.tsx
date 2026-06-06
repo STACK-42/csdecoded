@@ -1,4 +1,12 @@
 import { ReactNode, useId, useMemo, useState } from "react";
+import {
+  ReactFlow,
+  Handle,
+  Position,
+  type Edge as RFEdge,
+  type Node as RFNode,
+} from "@xyflow/react";
+import dagre from "@dagrejs/dagre";
 
 type Tone = "neon" | "orange" | "sky" | "violet" | "mint";
 
@@ -182,18 +190,43 @@ export function AutomatonDiagram({
   const hasReverse = (from: string, to: string) =>
     from !== to && pairKeys.has(`${to}${from}`);
 
+  /* ---------- tokenize input via greedy longest-match against the alphabet,
+       so multi-character symbols (e.g. "$5", "$10") work alongside single-
+       character ones. Whitespace is permitted but ignored — the reader can
+       type "$5 $10 $5" or "$5$10$5" and get the same parse. Returns null
+       if a substring matches no alphabet symbol. ---------- */
+  const tokens = useMemo(() => {
+    if (input.length === 0) return [] as string[];
+    const sorted = [...alphabet].sort((a, b) => b.length - a.length);
+    const clean = input.replace(/\s+/g, "");
+    const result: string[] = [];
+    let i = 0;
+    while (i < clean.length) {
+      const m = sorted.find((sym) => sym.length > 0 && clean.slice(i, i + sym.length) === sym);
+      if (!m) return null;
+      result.push(m);
+      i += m.length;
+    }
+    return result;
+  }, [input, alphabet]);
+
+  const useTokenSeparator = useMemo(
+    () => alphabet.some((s) => s.length > 1),
+    [alphabet]
+  );
+
   /* ---------- simulator ---------- */
   const handleStep = () => {
     if (status !== "idle") return;
-    if (position >= input.length) {
-      setStatus(accepting.includes(currentState) ? "accepted" : "rejected");
-      return;
-    }
-    const symbol = input[position];
-    if (!alphabet.includes(symbol)) {
+    if (tokens === null) {
       setStatus("rejected-no-transition");
       return;
     }
+    if (position >= tokens.length) {
+      setStatus(accepting.includes(currentState) ? "accepted" : "rejected");
+      return;
+    }
+    const symbol = tokens[position];
     const t = transitions.find((tr) => tr.from === currentState && tr.label === symbol);
     if (!t) {
       setStatus("rejected-no-transition");
@@ -202,7 +235,7 @@ export function AutomatonDiagram({
     const nextPos = position + 1;
     setCurrentState(t.to);
     setPosition(nextPos);
-    if (nextPos >= input.length) {
+    if (nextPos >= tokens.length) {
       setStatus(accepting.includes(t.to) ? "accepted" : "rejected");
     }
   };
@@ -514,16 +547,19 @@ export function AutomatonDiagram({
           <div className="flex items-baseline gap-2">
             <span className="text-muted-foreground tracking-widest">INPUT</span>
             <span>
-              {input.length === 0 ? (
+              {tokens === null ? (
+                <span className="text-orange italic">invalid input</span>
+              ) : tokens.length === 0 ? (
                 <span className="text-muted-foreground italic">empty</span>
               ) : (
-                input.split("").map((ch, i) => {
+                tokens.map((tok, i) => {
                   let cls = "text-foreground";
                   if (i < position) cls = "text-muted-foreground line-through";
                   else if (i === position && status === "idle") cls = "text-neon font-bold";
                   return (
-                    <span key={i} className={cls}>
-                      {ch}
+                    <span key={i}>
+                      <span className={cls}>{tok}</span>
+                      {useTokenSeparator && i < tokens.length - 1 ? " " : ""}
                     </span>
                   );
                 })
@@ -551,6 +587,150 @@ export function AutomatonDiagram({
             )}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   Diagram — static educational diagrams (pipelines, flowcharts).
+   Wraps ReactFlow with dagre auto-layout, brand-tokened nodes
+   and edges, and all interactivity stripped. Use this for any
+   non-stateful conceptual graph; use AutomatonDiagram for actual
+   state machines the reader needs to step through.
+   ============================================================ */
+
+type DiagramNodeKind = "source" | "sink" | "default";
+
+type DiagramNode = {
+  id: string;
+  label: string;
+  type?: "source" | "sink";
+};
+
+type DiagramEdge = {
+  from: string;
+  to: string;
+  label?: string;
+};
+
+type DiagramProps = {
+  nodes: DiagramNode[];
+  edges: DiagramEdge[];
+  direction?: "LR" | "TB";
+};
+
+const DIAGRAM_NODE_W = 180;
+const DIAGRAM_NODE_H = 52;
+
+function DiagramBaseNode({
+  data,
+}: {
+  data: { label: string; kind: DiagramNodeKind; direction: "LR" | "TB" };
+}) {
+  const target = data.direction === "TB" ? Position.Top : Position.Left;
+  const source = data.direction === "TB" ? Position.Bottom : Position.Right;
+
+  const tintClass =
+    data.kind === "source"
+      ? "border-neon"
+      : data.kind === "sink"
+        ? "border-mint"
+        : "border-border";
+
+  return (
+    <div
+      className={`flex items-center justify-center border ${tintClass} bg-card rounded-sm px-4 py-2 font-mono text-sm text-foreground tracking-wide whitespace-nowrap`}
+    >
+      <Handle type="target" position={target} />
+      {data.label}
+      <Handle type="source" position={source} />
+    </div>
+  );
+}
+
+const diagramNodeTypes = { base: DiagramBaseNode };
+
+function layoutDiagram(
+  nodes: DiagramNode[],
+  edges: DiagramEdge[],
+  direction: "LR" | "TB"
+) {
+  const g = new dagre.graphlib.Graph();
+  g.setDefaultEdgeLabel(() => ({}));
+  g.setGraph({ rankdir: direction, ranksep: 80, nodesep: 40 });
+
+  nodes.forEach((n) =>
+    g.setNode(n.id, { width: DIAGRAM_NODE_W, height: DIAGRAM_NODE_H })
+  );
+  edges.forEach((e) => g.setEdge(e.from, e.to));
+  dagre.layout(g);
+
+  return nodes.map((n) => {
+    const pos = g.node(n.id);
+    return {
+      ...n,
+      position: {
+        x: pos.x - DIAGRAM_NODE_W / 2,
+        y: pos.y - DIAGRAM_NODE_H / 2,
+      },
+    };
+  });
+}
+
+export function Diagram({ nodes, edges, direction = "LR" }: DiagramProps) {
+  const layouted = useMemo(
+    () => layoutDiagram(nodes, edges, direction),
+    [nodes, edges, direction]
+  );
+
+  const rfNodes: RFNode[] = layouted.map((n) => ({
+    id: n.id,
+    position: n.position,
+    type: "base",
+    data: { label: n.label, kind: n.type ?? "default", direction },
+    draggable: false,
+    selectable: false,
+  }));
+
+  const rfEdges: RFEdge[] = edges.map((e) => ({
+    id: `${e.from}->${e.to}`,
+    source: e.from,
+    target: e.to,
+    label: e.label,
+    type: "default",
+    labelBgPadding: [6, 3],
+    labelBgBorderRadius: 2,
+  }));
+
+  // Auto-fit container height from the laid-out bounding box.
+  const padding = 40;
+  const containerHeight = layouted.reduce(
+    (max, n) => Math.max(max, n.position.y + DIAGRAM_NODE_H),
+    0
+  ) + padding;
+
+  return (
+    <div className="not-prose my-8 border border-border bg-card rounded-sm overflow-hidden text-foreground">
+      <div style={{ height: containerHeight, width: "100%" }}>
+        <ReactFlow
+          nodes={rfNodes}
+          edges={rfEdges}
+          nodeTypes={diagramNodeTypes}
+          nodesDraggable={false}
+          nodesConnectable={false}
+          elementsSelectable={false}
+          panOnDrag={false}
+          zoomOnScroll={false}
+          zoomOnPinch={false}
+          zoomOnDoubleClick={false}
+          preventScrolling={false}
+          proOptions={{ hideAttribution: true }}
+          fitView
+          fitViewOptions={{ padding: 0.15 }}
+          minZoom={1}
+          maxZoom={1}
+        />
       </div>
     </div>
   );
